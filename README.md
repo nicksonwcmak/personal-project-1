@@ -1,9 +1,11 @@
 # personal-project-1
 
-Personal Project: create a map application. Potentially, also add itinerary functions.
+Personal Project: Task organizer
+Take a bunch of tasks, with time required and other tasks that must be done before them, maybe different deadlines
+Output suggested order to do the tasks
 
-Goals:
-1. Create graph to make locations, routes between them
-2. Add weights (travel times)
-3. Use BFS to find the fastest route
-4. Once have the quickest route, create a schedule of places to visit, times at each
+User stories
+1. Add a task
+2. Delete a task
+3. Check a task
+4. Get optimal task order 
