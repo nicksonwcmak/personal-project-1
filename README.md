@@ -8,4 +8,5 @@ User stories
 1. Add a task
 2. Delete a task
 3. Check a task
-4. Get optimal task order 
+4. Generate to-do list
+5. Mark items as completed to remove them (queue?)
