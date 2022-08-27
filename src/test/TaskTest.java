@@ -1,8 +1,8 @@
 import model.Task;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,7 +14,7 @@ class TaskTest {
     public void testConstructorNoPrereqs() {
         testTask = new Task("TEST",10);
         assertEquals("TEST", testTask.getName());
-        assertEquals(10, testTask.getTime());
+        assertEquals(10, testTask.getDuration());
     }
 
 //    @Test
@@ -29,7 +29,7 @@ class TaskTest {
 
     @Test
     public void testConstructorPrereqs() {
-        List<Task> prereqs = new ArrayList<>();
+        Set<Task> prereqs = new HashSet<>();
         for (int i = 1; i < 10; i++) {
             prereqs.add(new Task("TEST" + i, i));
         }

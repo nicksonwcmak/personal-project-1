@@ -1,47 +1,38 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 // represents a task with name, time to finish, and prerequisite tasks
 public class Task {
-    private String name;
-    private int time;
-    private List<Task> prereqs;
+    private String name; // name of task
+    private int duration; // time to complete
+    private Set<Task> prereqs;
 
     // EFFECTS: creates a task with name, time, no prereqs
     public Task(String name, int time) {
         this.name = name;
-        this.time = time;
-        this.prereqs = new ArrayList<>();
+        this.duration = time;
+        this.prereqs = new HashSet<>();
     }
 
     // EFFECTS: creates a task with name, time, listed prereqs
-    public Task(String name, int time, List<Task> prereqs) {
+    public Task(String name, int time, Set<Task> prereqs) {
         this.name = name;
-        this.time = time;
+        this.duration = time;
         this.prereqs = prereqs; // impossible to construct task w/ itself as a prereq, no need to check
     }
-
-    // EFFECTS: returns true if list of prereqs does not contain this
-//    private boolean noSelfPrereq(List<Task> tasks) {
-//        for(Task task : tasks) {
-//            if (task == this) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 
     public String getName() {
         return name;
     }
 
-    public int getTime() {
-        return time;
+    public int getDuration() {
+        return duration;
     }
 
-    public List<Task> getPrereqs() {
+    public Set<Task> getPrereqs() {
         return prereqs;
     }
+
 }

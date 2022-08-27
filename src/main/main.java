@@ -1,8 +1,8 @@
-import model.TaskList;
+import model.ToDoList;
 
 public class main {
     // EFFECTS: starts the main.main.model
     public static void main(String[] args) {
-        new TaskList(); // placeholder
+        new ToDoList(); // placeholder
     }
 }
