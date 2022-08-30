@@ -101,11 +101,6 @@ class ToDoListTest {
 
     @Test
     public void testRemoveTaskWithPrereqs() {
-        setupTasks();
-        // TODO
-    }
-
-    private void setupTasks() {
         Task testTask1 = new Task("TEST1",1);
         Task testTask2 = new Task("TEST2",2);
         Task testTask3 = new Task("TEST3",3);
@@ -121,7 +116,26 @@ class ToDoListTest {
         prereqs6.add(testTask5);
         Task testTask6 = new Task("TEST6",6,prereqs6);
 
-        // TODO: add to testToDoList
+        try {
+            testToDoList.addTask(testTask1);
+            testToDoList.addTask(testTask2);
+            testToDoList.addTask(testTask3);
+            testToDoList.addTask(testTask4);
+            testToDoList.addTask(testTask5);
+            testToDoList.addTask(testTask6);
+
+            testToDoList.removeTask(testTask4);
+            Collection<Task> tasks = testToDoList.getTasks();
+            assertTrue(tasks.contains(testTask1));
+            assertTrue(tasks.contains(testTask2));
+            assertTrue(tasks.contains(testTask3));
+            assertFalse(tasks.contains(testTask4));
+            assertTrue(tasks.contains(testTask5));
+            assertFalse(tasks.contains(testTask6));
+        } catch (AlreadyInToDoListException e) {
+            fail("Caught AlreadyInToDoListException when no exception expected");
+        }
+
     }
 
     @Test

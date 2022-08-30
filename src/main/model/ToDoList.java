@@ -37,13 +37,17 @@ public class ToDoList {
     // EFFECTS: removes task if list contains it, recursively removes all tasks with task as a prereq
     public void removeTask(Task task) {
         tasks.remove(task.getName());
+
+        prereqRelations.removeIf(pair -> pair.getValue() == task);
+
+        Set<Task> toRemove = new HashSet<>();
         for (Pair<Task,Task> pair : prereqRelations) {
-            if (pair.getValue() == task) {
-                prereqRelations.remove(pair);
-            } else if (pair.getKey() == task) {
-                prereqRelations.remove(pair);
-                removeTask(pair.getValue());
+            if (pair.getKey() == task) {
+                toRemove.add(pair.getValue());
             }
+        }
+        for (Task t : toRemove) {
+            removeTask(t);
         }
     }
 
