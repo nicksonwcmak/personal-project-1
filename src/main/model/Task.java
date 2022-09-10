@@ -1,23 +1,23 @@
 package model;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 // represents a task with name, time to finish, and prerequisite tasks
 public class Task {
     private String name; // name of task
     private int duration; // time to complete
-    private Set<Task> prereqs;
+    private Collection<Task> prereqs; // collection of prerequisite tasks; any collection should work (?)
 
     // EFFECTS: creates a task with name, time, no prereqs
     public Task(String name, int time) {
         this.name = name;
         this.duration = time;
-        this.prereqs = new HashSet<>();
+        this.prereqs = new HashSet<>(); // just need an empty Collection, specific class doesn't matter
     }
 
     // EFFECTS: creates a task with name, time, listed prereqs
-    public Task(String name, int time, Set<Task> prereqs) {
+    public Task(String name, int time, Collection<Task> prereqs) {
         this.name = name;
         this.duration = time;
         this.prereqs = prereqs; // impossible to construct task w/ itself as a prereq, no need to check
@@ -31,7 +31,7 @@ public class Task {
         return duration;
     }
 
-    public Set<Task> getPrereqs() {
+    public Collection<Task> getPrereqs() {
         return prereqs;
     }
 

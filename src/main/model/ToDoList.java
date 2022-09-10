@@ -26,7 +26,7 @@ public class ToDoList {
         } else {
             tasks.put(task.getName(),task);
 
-            Set<Task> prereqs = task.getPrereqs();
+            Collection<Task> prereqs = task.getPrereqs();
             for (Task prereq : prereqs) {
                 prereqRelations.add(new Pair<>(prereq,task));
             }
@@ -64,7 +64,33 @@ public class ToDoList {
 
     // EFFECTS: returns tasks stored in the to-do list, in order
     //          tasks are returned such that every task is preceded by its prereqs
-    public List<Task> orderedTasks() {
-        return new ArrayList<>(); // stub
+    public List<Task> orderedTasks() { // return List or Queue?
+        List<Task> list = new LinkedList<>();
+        Set<Task> visited = new HashSet<>(); // keeps track of names of visited
+        // note: since tasks with duplicate names aren't added, could just store strings
+        Collection<Task> taskCollection = tasks.values();
+        for (Task curr: taskCollection) {
+            orderTask(list, visited, curr);
+        }
+
+        return list;
     }
+
+    // helper for orderedTasks
+    // EFFECTS: adds curr to list such that it is behind all of its prerequisites
+    private void orderTask(List<Task> list, Set<Task> visited, Task curr) {
+        // do a post order traversal of "tree" rooted at this Task
+        // if this task hasn't yet been visited
+        if (!visited.contains(curr)) {
+            // mark as visited
+            visited.add(curr);
+            // recurse on prereqs
+            for (Task next : curr.getPrereqs()) {
+                orderTask(list, visited, next);
+            }
+            // add to end of list
+            list.add(curr);
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,6 +71,17 @@ class ToDoListTest {
                 testToDoList.addTask(new Task("TEST" + i, i, prereq));
             }
             testToDoList.addTask(new Task("TEST10",10, prereq));
+            fail("AlreadyInToDoListException was not thrown");
+        } catch (AlreadyInToDoListException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testAddTaskSameName() {
+        try {
+            testToDoList.addTask(new Task("TEST",1));
+            testToDoList.addTask(new Task("TEST",2));
             fail("AlreadyInToDoListException was not thrown");
         } catch (AlreadyInToDoListException e) {
             // expected
@@ -151,4 +163,46 @@ class ToDoListTest {
         }
     }
 
+    @Test
+    public void testOrderedTasksEmpty() {
+        List<Task> ordered = testToDoList.orderedTasks();
+        assertTrue(ordered.isEmpty());
+    }
+
+    @Test
+    public void testOrderedTasksSingle() {
+        Task testTask = new Task("TEST",1);
+        try {
+            testToDoList.addTask(testTask);
+        } catch (AlreadyInToDoListException e) {
+            fail("Caught AlreadyInToDoListException when no exception expected");
+        }
+        List<Task> ordered = testToDoList.orderedTasks();
+        assertTrue(ordered.contains(testTask));
+        assertEquals(1,ordered.size());
+    }
+
+    @Test
+    public void testOrderedTasksMany() {
+        fillManyTasks();
+        // maybe split into many different tests?
+
+        List<Task> ordered = testToDoList.orderedTasks();
+        Set<Task> checked = new HashSet<>();
+        for (Task task : ordered) {
+            assertTrue(checked.containsAll(task.getPrereqs()));
+            checked.add(task);
+        }
+    }
+
+    // TODO: helper for testOrderedTasksMany
+    // fills testToDoList with many tasks
+    // make sure to include:
+    // task with no prereqs, task not a prereq for anything else, task prereq for exactly one thing
+    // task prereq for multiple different things
+    // draw a diagram
+    private void fillManyTasks() {
+        Task task1 = new Task("TEST1",1);
+        Task task2 = new Task("TEST2",2);
+    }
 }
