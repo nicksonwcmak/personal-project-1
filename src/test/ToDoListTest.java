@@ -183,26 +183,69 @@ class ToDoListTest {
     }
 
     @Test
-    public void testOrderedTasksMany() {
-        fillManyTasks();
-        // maybe split into many different tests?
-
-        List<Task> ordered = testToDoList.orderedTasks();
-        Set<Task> checked = new HashSet<>();
-        for (Task task : ordered) {
-            assertTrue(checked.containsAll(task.getPrereqs()));
-            checked.add(task);
+    public void testOrderedTasksDisjoint() {
+        Task task1 = new Task("TEST1",1);
+        Task task2 = new Task("TEST2",2);
+        Set<Task> prereq3 = new HashSet<>();
+        prereq3.add(task2);
+        Task task3 = new Task("TEST3",3,prereq3);
+        try {
+            testToDoList.addTask(task2);
+            testToDoList.addTask(task3);
+            testToDoList.addTask(task1);
+            assertTrue(verifyTaskOrder(testToDoList.orderedTasks()));
+        } catch (AlreadyInToDoListException e) {
+            fail("Caught AlreadyInToDoListException when no exception expected");
         }
     }
 
-    // TODO: helper for testOrderedTasksMany
-    // fills testToDoList with many tasks
-    // make sure to include:
-    // task with no prereqs, task not a prereq for anything else, task prereq for exactly one thing
-    // task prereq for multiple different things
-    // draw a diagram
-    private void fillManyTasks() {
+    @Test
+    public void testOrderedTasksMany() {
         Task task1 = new Task("TEST1",1);
         Task task2 = new Task("TEST2",2);
+        Set<Task> prereq3 = new HashSet<>();
+        prereq3.add(task2);
+        Task task3 = new Task("TEST3",3,prereq3); // prereqs 2
+        Task task4 = new Task("TEST4",4);
+        Task task5 = new Task("TEST5",5);
+        Set<Task> prereq6 = new HashSet<>();
+        prereq6.add(task1);
+        prereq6.add(task4);
+        prereq6.add(task5);
+        Task task6 = new Task("TEST6",6,prereq6); // prereqs 1, 4, 5
+        Set<Task> prereq7 = new HashSet<>();
+        prereq7.add(task1);
+        Task task7 = new Task("TEST7",7,prereq7); // prereqs 1
+        Set<Task> prereq89 = new HashSet<>();
+        prereq89.add(task6);
+        prereq89.add(task7);
+        Task task8 = new Task("TEST8",8,prereq89); // prereqs 6, 7
+        Task task9 = new Task("TEST9",9,prereq89); // prereqs 6, 7
+
+        try {
+            testToDoList.addTask(task1);
+            testToDoList.addTask(task2);
+            testToDoList.addTask(task3);
+            testToDoList.addTask(task4);
+            testToDoList.addTask(task5);
+            testToDoList.addTask(task6);
+            testToDoList.addTask(task7);
+            testToDoList.addTask(task8);
+            testToDoList.addTask(task9);
+            assertTrue(verifyTaskOrder(testToDoList.orderedTasks()));
+        } catch (AlreadyInToDoListException e) {
+            fail("Caught AlreadyInToDoListException when no exception expected");
+        }
+    }
+
+    private boolean verifyTaskOrder(List<Task> ordered) {
+        Set<Task> checked = new HashSet<>();
+        for (Task task : ordered) {
+            if (!checked.containsAll(task.getPrereqs())){
+                return false;
+            }
+            checked.add(task);
+        }
+        return true;
     }
 }

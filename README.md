@@ -7,6 +7,6 @@ Output suggested order to do the tasks
 User stories
 1. Add a task
 2. Delete a task
-3. Check a task
+3. Check state of a task
 4. Generate to-do list
 5. Mark items as completed to remove them (queue?)
