@@ -1,6 +1,7 @@
 import model.Task;
 import model.ToDoList;
 import model.exceptions.AlreadyInToDoListException;
+import model.exceptions.MissingPrerequisiteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class ToDoListTest {
 
     @Test
     public void testConstructor() {
-        Collection<Task> testTasks = testToDoList.getTasks();
+        Collection<Task> testTasks = testToDoList.orderedTasks();
         assertTrue(testTasks.isEmpty());
     }
 
@@ -30,11 +31,11 @@ class ToDoListTest {
         Task testTask = new Task("TEST",10);
         try {
             testToDoList.addTask(testTask);
-            Collection<Task> testTasks = testToDoList.getTasks();
+            Collection<Task> testTasks = testToDoList.orderedTasks();
             assertTrue(testTasks.contains(testTask));
             assertEquals(1,testTasks.size());
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
@@ -45,14 +46,14 @@ class ToDoListTest {
             for (int i = 1; i <= testElts; i++) {
                 testToDoList.addTask(new Task("TEST" + i, i));
             }
-            Collection<Task> testTasks = testToDoList.getTasks();
+            Collection<Task> testTasks = testToDoList.orderedTasks();
             for (int i = 1; i <= testElts; i++) {
                 Task testTask = new Task("TEST" + i, i);
                 assertTrue(testTasks.contains(testTask)); // works because overridden equals
             }
             assertEquals(testElts,testTasks.size());
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
@@ -74,6 +75,8 @@ class ToDoListTest {
             fail("AlreadyInToDoListException was not thrown");
         } catch (AlreadyInToDoListException e) {
             // expected
+        } catch (MissingPrerequisiteException e) {
+            fail("Caught MissingPrerequisiteException when AlreadyInToDoListException was expected");
         }
     }
 
@@ -85,15 +88,37 @@ class ToDoListTest {
             fail("AlreadyInToDoListException was not thrown");
         } catch (AlreadyInToDoListException e) {
             // expected
+        } catch (MissingPrerequisiteException e) {
+            fail("Caught MissingPrerequisiteException when AlreadyInToDoListException was expected");
         }
     }
+
+    @Test
+    public void testAddTaskMissingPrereq() {
+        Task testTask1 = new Task("TEST1",1);
+        Task testTask2 = new Task("TEST2",2);
+        Set<Task> prereq3 = new HashSet<>();
+        prereq3.add(testTask2);
+        prereq3.add(testTask1);
+        Task testTask3 = new Task("TEST3",3,prereq3);
+        try {
+            testToDoList.addTask(testTask2);
+            testToDoList.addTask(testTask3);
+            fail("MissingPrerequisiteException was not thrown");
+        } catch (AlreadyInToDoListException e) {
+            fail("Caught AlreadyInToDoListException when MissingPrerequisiteException was expected");
+        } catch (MissingPrerequisiteException e) {
+            // expected
+        }
+    }
+
 
     @Test
     public void testRemoveTaskEmpty() {
         Task testTask = new Task("TEST",1);
         testToDoList.removeTask(testTask);
 
-        Collection<Task> testTasks = testToDoList.getTasks();
+        Collection<Task> testTasks = testToDoList.orderedTasks();
         assertEquals(0,testTasks.size());
     }
 
@@ -104,10 +129,10 @@ class ToDoListTest {
             testToDoList.addTask(testTask);
             testToDoList.removeTask(testTask);
 
-            Collection<Task> testTasks = testToDoList.getTasks();
+            Collection<Task> testTasks = testToDoList.orderedTasks();
             assertEquals(0,testTasks.size());
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
@@ -137,15 +162,15 @@ class ToDoListTest {
             testToDoList.addTask(testTask6);
 
             testToDoList.removeTask(testTask4);
-            Collection<Task> tasks = testToDoList.getTasks();
+            Collection<Task> tasks = testToDoList.orderedTasks();
             assertTrue(tasks.contains(testTask1));
             assertTrue(tasks.contains(testTask2));
             assertTrue(tasks.contains(testTask3));
             assertFalse(tasks.contains(testTask4));
             assertTrue(tasks.contains(testTask5));
             assertFalse(tasks.contains(testTask6));
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
 
     }
@@ -158,8 +183,8 @@ class ToDoListTest {
 
             assertTrue(testToDoList.hasTaskWithName("TEST"));
             assertFalse(testToDoList.hasTaskWithName("test"));
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
@@ -174,12 +199,13 @@ class ToDoListTest {
         Task testTask = new Task("TEST",1);
         try {
             testToDoList.addTask(testTask);
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+
+            List<Task> ordered = testToDoList.orderedTasks();
+            assertTrue(ordered.contains(testTask));
+            assertEquals(1,ordered.size());
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
-        List<Task> ordered = testToDoList.orderedTasks();
-        assertTrue(ordered.contains(testTask));
-        assertEquals(1,ordered.size());
     }
 
     @Test
@@ -194,8 +220,8 @@ class ToDoListTest {
             testToDoList.addTask(task3);
             testToDoList.addTask(task1);
             assertTrue(verifyTaskOrder(testToDoList.orderedTasks()));
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
@@ -233,8 +259,8 @@ class ToDoListTest {
             testToDoList.addTask(task8);
             testToDoList.addTask(task9);
             assertTrue(verifyTaskOrder(testToDoList.orderedTasks()));
-        } catch (AlreadyInToDoListException e) {
-            fail("Caught AlreadyInToDoListException when no exception expected");
+        } catch (Exception e) {
+            fail("Caught exception when no exception expected");
         }
     }
 
