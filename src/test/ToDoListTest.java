@@ -5,10 +5,7 @@ import model.exceptions.MissingPrerequisiteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -176,15 +173,37 @@ class ToDoListTest {
     }
 
     @Test
-    public void testHasTaskWithName() {
+    public void testFindTaskWithNameNoException() {
         try {
             Task testTask1 = new Task("TEST",1);
+            Task testTask2 = new Task("TEST1",1);
+            Task testTask3 = new Task("TES",1);
+            Task testTask4 = new Task("test",1);
             testToDoList.addTask(testTask1);
-
-            assertTrue(testToDoList.hasTaskWithName("TEST"));
-            assertFalse(testToDoList.hasTaskWithName("test"));
+            testToDoList.addTask(testTask2);
+            testToDoList.addTask(testTask3);
+            testToDoList.addTask(testTask4);
+            assertEquals(testTask1,testToDoList.findTaskWithName("TEST"));
         } catch (Exception e) {
             fail("Caught exception when no exception expected");
+        }
+    }
+
+    @Test
+    public void testFindTaskWithNameException() {
+        try {
+            Task testTask2 = new Task("TEST1",1);
+            Task testTask3 = new Task("TES",1);
+            Task testTask4 = new Task("test",1);
+            testToDoList.addTask(testTask2);
+            testToDoList.addTask(testTask3);
+            testToDoList.addTask(testTask4);
+            Task returned = testToDoList.findTaskWithName("TEST");
+            fail("NoSuchElementException was not thrown");
+        } catch (NoSuchElementException e) {
+            // expected
+        } catch (AlreadyInToDoListException | MissingPrerequisiteException e) {
+            fail("Caught other exception when NoSuchElementException was expected");
         }
     }
 

@@ -57,9 +57,15 @@ public class ToDoList {
         }
     }
 
-    // EFFECTS: returns true if the list contains task with given name
-    public boolean hasTaskWithName(String name) {
-        return tasks.containsKey(name);
+    // EFFECTS: if to-do list has a task with the given name, returns it
+    //          otherwise throws NoSuchElementException
+    public Task findTaskWithName(String name) {
+        Task task = tasks.get(name);
+        if (task == null) {
+            throw new NoSuchElementException();
+        } else {
+            return task;
+        }
     }
 
     // EFFECTS: returns tasks stored in the to-do list, in order

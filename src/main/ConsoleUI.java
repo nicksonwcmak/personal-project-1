@@ -3,9 +3,7 @@ import model.ToDoList;
 import model.exceptions.AlreadyInToDoListException;
 import model.exceptions.MissingPrerequisiteException;
 
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 // represents a console UI for using ToDoList
 public class ConsoleUI {
@@ -75,21 +73,27 @@ public class ConsoleUI {
         int dur = input.nextInt();
 
         Set<Task> prereqs = new HashSet<>();
-        while(!input.next().equals(" ")) {
-            System.out.println("Input name of a prerequisite task (press space to end):");
+        while(true) {
+            System.out.println("Input name of a prerequisite task (press q to skip):");
             String prereqName = input.next();
-            Task prereq  = findTask(prereqName);
-            if (prereq == null) {
-                System.out.println("There is no task with that name in the to-do list.");
-            } else {
+            if (prereqName.equals("q")) {
+                break;
+            }
+
+            try {
+                Task prereq  = toDoList.findTaskWithName(prereqName);
+                System.out.println("Prerequisite successfully added");
                 prereqs.add(prereq);
+            } catch (NoSuchElementException e) {
+                System.out.println("There is no such task in the list.");
             }
         }
 
         try {
             toDoList.addTask(new Task(name,dur,prereqs));
+            System.out.println("Task successfully added.");
         } catch (AlreadyInToDoListException e) {
-            System.out.println("There is already a task with this name in the to-do list.");
+            System.out.println("Task not added. There is already a task with this name in the to-do list.");
         } catch (MissingPrerequisiteException e) {
             System.out.println("At least one of the prerequisite tasks has not been added yet.");
         }
@@ -97,17 +101,27 @@ public class ConsoleUI {
 
     // EFFECTS: displays a Task's information
     private void displayTaskInfo() {
-        // stub
+        System.out.println("Finding a task:");
+
+        System.out.println("Input task name:");
+        String name = input.next();
+        try {
+            Task returned = toDoList.findTaskWithName(name);
+            System.out.println("Displaying task info:");
+            System.out.println("Task name: " + returned.getName());
+            System.out.println("Task duration: " + returned.getDuration());
+
+            Collection<Task> prereqs = returned.getPrereqs();
+            for (Task t : prereqs) {
+                System.out.println("Prerequisite task: " + t.getName());
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("To-do list contains no task with that name.");
+        }
     }
 
     // EFFECTS: outputs a list of tasks, in a valid ordering
     private void displayOrderedTasks() {
         // stub
-    }
-
-    // EFFECTS: returns task with given name, or null if it isn't in toDoList
-    private Task findTask(String taskName) {
-        // stub
-        return new Task("",0);
     }
 }
