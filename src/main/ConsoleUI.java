@@ -122,6 +122,14 @@ public class ConsoleUI {
 
     // EFFECTS: outputs a list of tasks, in a valid ordering
     private void displayOrderedTasks() {
-        // stub
+        System.out.println("Generating task list...");
+        List<Task> tasks = toDoList.orderedTasks();
+        if (tasks.isEmpty()) {
+            System.out.println("There are no tasks in the list.");
+        } else {
+            for (Task task : tasks) {
+                System.out.println("Task: " + task.getName() +", Duration: " + task.getDuration());
+            }
+        }
     }
 }
